@@ -135,5 +135,54 @@ private:
     void sizecheck();
 };
 
+class CHeapArr
+{
+
+//data
+public:
+  int percolates;		//for counting purposes
+  heapelement* heap[MAX_NUM];
+  int currentsize[MAX_NUM];
+  int allocated[MAX_NUM];
+  int num;
+//constructors
+public:
+  CHeapArr(int num);
+  ~CHeapArr();
+
+//functions
+public:
+
+  bool emptyheap(int i); 
+  bool fullheap(int i);
+  bool inheap(AbstractSearchState *AbstractSearchState, int i);
+  CKey getkeyheap(AbstractSearchState *AbstractSearchState, int i);
+  void makeemptyheap(int i);
+  void insertheap(AbstractSearchState *AbstractSearchState, CKey key, int i);
+  void deleteheap(AbstractSearchState *AbstractSearchState, int i);
+  void updateheap(AbstractSearchState *AbstractSearchState, CKey NewKey, int i);
+  AbstractSearchState *getminheap(int i);
+  AbstractSearchState *getminheap(CKey& ReturnKey, int i);
+  CKey getminkeyheap(int i);
+  AbstractSearchState *deleteminheap(int i);
+  void makeheap(int i);
+  void insert_unsafe(AbstractSearchState *state, CKey key, int i);
+  void updateheap_unsafe(AbstractSearchState *AbstractSearchState, CKey NewKey, int i);
+  void deleteheap_unsafe(AbstractSearchState *AbstractSearchState, int i);
+
+
+private:
+  void percolatedown(int hole, heapelement tmp, int i);
+  void percolateup(int hole, heapelement tmp, int i);
+  void percolateupordown(int hole, heapelement tmp, int i);
+
+  void growheap(int i);
+  void sizecheck(int i);
+
+
+//operators
+public:
+
+};
 #endif
 

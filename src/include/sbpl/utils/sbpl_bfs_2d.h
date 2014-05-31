@@ -174,6 +174,10 @@ public:
 
     int get_distance(unsigned int x, unsigned int y)
     {
+        if (x < 0 || x >= size_x_ || y < 0 || y >= size_y_) {
+            printf("ERROR[get_distance]: point is out of bounds!\n");
+            return false;
+        }
         return dist_[x][y];
     }
 

@@ -50,6 +50,8 @@ enum STATEID2IND
 #define RSTARMDP_STATEID2IND STATEID2IND_SLOT0
 #define RSTARMDP_LSEARCH_STATEID2IND STATEID2IND_SLOT1
 #define anaMDP_STATEID2IND STATEID2IND_SLOT0
+#define MMDP_STATEID2IND STATEID2IND_SLOT0
+
 
 //for example
 //#define YYYPLANNER_STATEID2IND STATEID2IND_SLOT0
@@ -161,6 +163,10 @@ public:
      * \brief index of the state in the heap, typically used for membership in OPEN
      */
     int heapindex;
+
+    // Added for the MPlanner
+    int heapind[MAX_NUM];  
+
     /**
      * \brief type of state. usually it will be general state
      */
@@ -340,6 +346,10 @@ public:
      */
     virtual void set_initialsolution_eps(double initialsolution_eps) { }
 
+    // Parameters for the MHA* planner
+    virtual void set_initialsolution_eps1(double initialsolution_eps) {}
+    virtual void set_initialsolution_eps2(double initialsolution_eps) {}
+    
     virtual ~SBPLPlanner() { }
 
 protected:

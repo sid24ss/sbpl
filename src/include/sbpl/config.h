@@ -52,6 +52,12 @@
  */
 #define TIME_DEBUG 0
 
+/** \brief sets the maximum of open lists/heaps for the 
+ * MPlanner
+ */
+#define MAX_NUM 5
+
+
 /**
  * \brief small epsilon for various floating error checking
  */

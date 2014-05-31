@@ -361,6 +361,9 @@ int ARAPlanner::ImprovePath(ARASearchStateSpace_t* pSearchStateSpace, double Max
         ReInitializeSearchStateInfo(searchgoalstate, pSearchStateSpace);
     }
 
+    printf("[ARA] Going to try finding a solution for the next %f seconds\n", MaxNumofSecs
+        - (clock() - TimeStarted)/double(CLOCKS_PER_SEC));
+
     //set goal key
     goalkey.key[0] = searchgoalstate->g;
     //goalkey.key[1] = searchgoalstate->h;
@@ -373,6 +376,8 @@ int ARAPlanner::ImprovePath(ARASearchStateSpace_t* pSearchStateSpace, double Max
                (pSearchStateSpace->eps_satisfied == INFINITECOST ||
                (clock() - TimeStarted) < repair_time * (double)CLOCKS_PER_SEC))
     {
+        // if((int(double(clock() - TimeStarted)/(CLOCKS_PER_SEC)))%15==0)
+        //     printf("Time elapsed: %f\n", (clock() - TimeStarted)/double(CLOCKS_PER_SEC));
         //get the state
         state = (ARAState*)pSearchStateSpace->heap->deleteminheap();
 
@@ -846,6 +851,7 @@ vector<int> ARAPlanner::GetSearchPath(ARASearchStateSpace_t* pSearchStateSpace, 
         SBPL_ERROR("ERROR: could not open file\n");
         throw new SBPL_Exception();
     }
+    double reconstruct_time = clock();
     while (state->StateID != goalstate->StateID) {
         if (state->PlannerSpecificData == NULL) {
             SBPL_FPRINTF(fOut, "path does not exist since search data does not exist\n");
@@ -862,7 +868,7 @@ vector<int> ARAPlanner::GetSearchPath(ARASearchStateSpace_t* pSearchStateSpace, 
             SBPL_FPRINTF(fOut, "path does not exist since bestnextstate == NULL\n");
             break;
         }
-
+        // double getsuccstime = clock();
         environment_->GetSuccs(state->StateID, &SuccIDV, &CostV);
         int actioncost = INFINITECOST;
         for (int i = 0; i < (int)SuccIDV.size(); i++) {
@@ -870,6 +876,7 @@ vector<int> ARAPlanner::GetSearchPath(ARASearchStateSpace_t* pSearchStateSpace, 
                 actioncost = CostV.at(i);
             }
         }
+        // printf("Get Succs time : %f\n", (clock() - getsuccstime)/CLOCKS_PER_SEC);
         if (actioncost == INFINITECOST) SBPL_PRINTF("WARNING: actioncost = %d\n", actioncost);
 
         solcost += actioncost;
@@ -897,6 +904,7 @@ vector<int> ARAPlanner::GetSearchPath(ARASearchStateSpace_t* pSearchStateSpace, 
 
         wholePathIds.push_back(state->StateID);
     }
+    printf("Reconstruct time: %f\n", (clock() - reconstruct_time)/CLOCKS_PER_SEC);
 
     return wholePathIds;
 }
@@ -933,9 +941,12 @@ bool ARAPlanner::Search(ARASearchStateSpace_t* pSearchStateSpace, vector<int>& p
         repair_time = INFINITECOST;
     }
     else if (bFirstSolution) {
-        MaxNumofSecs = INFINITECOST;
+        // Sid: Modified so that it quits if overtime
+        // MaxNumofSecs = INFINITECOST;
         repair_time = INFINITECOST;
     }
+
+    printf("(Epsilon set to %f)\n", pSearchStateSpace->eps);
 
     //the main loop of ARA*
     stats.clear();
@@ -947,6 +958,7 @@ bool ARAPlanner::Search(ARASearchStateSpace_t* pSearchStateSpace, vector<int>& p
                (clock() - TimeStarted) < repair_time * (double)CLOCKS_PER_SEC))
     {
         loop_time = clock();
+        
         //decrease eps for all subsequent iterations
         if (fabs(pSearchStateSpace->eps_satisfied - pSearchStateSpace->eps) < ERR_EPS && !bFirstSolution) {
             pSearchStateSpace->eps = pSearchStateSpace->eps - dec_eps;
@@ -1007,7 +1019,7 @@ bool ARAPlanner::Search(ARASearchStateSpace_t* pSearchStateSpace, vector<int>& p
 #endif
         prevexpands = searchexpands;
 
-        //if just the first solution then we are done
+        // if just the first solution then we are done
         if (bFirstSolution)
             break;
 

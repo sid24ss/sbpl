@@ -88,11 +88,17 @@ public:
      * \brief heuristic estimate from state with stateID to goal state
      */
     virtual int GetGoalHeuristic(int stateID) = 0;
+    
+    // \brief heuristic - heur_id estimate from state with stateID to goal state
+    virtual int  GetGoalHeuristic(int stateID, int heur_id){}
 
     /**
      * \brief heuristic estimate from start state to state with stateID
      */
     virtual int GetStartHeuristic(int stateID) = 0;
+
+    // \brief heuristic - heur_id from start state to state with stateID
+    virtual int  GetStartHeuristic(int stateID, int heur_id){}
 
     /** \brief depending on the search used, it may call GetSuccs function
      *         (for forward search) or GetPreds function (for backward search)
@@ -103,6 +109,9 @@ public:
      *         require this, so it is not necessary to support this
      */
     virtual void GetSuccs(int SourceStateID, std::vector<int>* SuccIDV, std::vector<int>* CostV) = 0;
+
+    virtual void GetSuccs(int SourceStateID, std::vector<int>* SuccIDV, std::vector<int>* CostV, int ii)
+    {};
 
     /**
      * \brief see comments for GetSuccs functon
@@ -230,4 +239,3 @@ public:
 };
 
 #endif
-
